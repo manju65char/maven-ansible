@@ -1,0 +1,34 @@
+---
+- name: installing the some tools    # PLAY-1
+  hosts: testnode
+  become: yes
+  tasks: 
+    - name: installing the devops tools  
+      yum:
+        name: "{{ item.a }}"
+        state: "{{ item.b }}"
+      loop:
+        - {a: vim, b: present}
+        - {a: python, b: present}
+        - {a: httpd, b: present}
+
+    - name: starting the server
+      service:
+        name: "{{ item.a }}"
+        state: "{{ item.c }}"
+      loop:
+        - {a: httpd, c: started}
+        - {a: httpd, c: restarted}
+
+    - name: copying the files to server
+      copy: 
+        src: index.html
+        dest: /var/www/html/
+
+    - name: restarting the server
+      service:
+        name: "{{ item.a }}"
+        state: "{{ item.c }}"
+      loop:
+        - {a: httpd, c: started}
+        - {a: httpd, c: restarted}
